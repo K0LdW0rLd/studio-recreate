@@ -1,32 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import styled from "styled-components";
 import Spinner from "react-bootstrap/Spinner";
-import CardGroup from "react-bootstrap/CardGroup";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import ListGroup from "react-bootstrap/ListGroup";
+import Wrapper from "../../styles/Wrapper";
+import StudioModal from "../studioModal/StudioModal";
 
-function StudioModal(props) {
-	return (
-		<Modal {...props} size="large">
-			<Modal.Header closeButton>
-				<Modal.Title>{props.item.title}</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>
-				<p>{props.item.description}</p>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button onClick={props.onHide}>Close</Button>
-			</Modal.Footer>
-		</Modal>
-	);
-}
+const StyledButton = styled(Button)`
+	color: palevioletred;
+	font-size: 1em;
+	margin: 1em;
+	padding: 0.25em 1em;
+	border: 2px solid palevioletred;
+	border-radius: 3px;
+`;
 
 export default function Home() {
 	const [film, setFilm] = useState([]);
+	const [filmData, setFilmData] = useState({});
 	const [showLoading, setShowLoading] = useState(true);
 	const [modalShow, setModalShow] = useState(false);
 
@@ -41,12 +35,14 @@ export default function Home() {
 		fetchData();
 	}, []);
 
-	const getId = (id) => {
-		setModalShow(true);
+	const toggleModal = async (item) => {
+		await setFilmData(item);
+		console.log(item.title);
+		setModalShow(!modalShow);
 	};
 
 	return (
-		<div className="jumbotron">
+		<Wrapper className="jumbotron">
 			{showLoading && (
 				<Spinner animation="border" role="status">
 					<span className="sr-only">Loading...</span>
@@ -57,6 +53,7 @@ export default function Home() {
 					{film.map((item, id) => (
 						<>
 							<Card
+								key={id}
 								style={{
 									width: "20rem",
 									padding: "15px",
@@ -67,22 +64,19 @@ export default function Home() {
 									{item.title}
 								</Card.Title>
 								<Card.Img variant="bottom" src={item.image} />
-								<Button
-									variant="info"
-									onClick={() => getId(item.id)}
-								>
+								<StyledButton onClick={() => toggleModal(item)}>
 									Learn More
-								</Button>
+								</StyledButton>
 							</Card>
 						</>
 					))}
 				</Row>
 			</Container>
-			{/* <StudioModal
-				item={item}
+			<StudioModal
+				filmData={filmData}
 				show={modalShow}
 				onHide={() => setModalShow(false)}
-			/> */}
-		</div>
+			/>
+		</Wrapper>
 	);
 }
