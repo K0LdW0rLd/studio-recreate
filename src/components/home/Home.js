@@ -18,6 +18,13 @@ const StyledButton = styled(Button)`
 	border-radius: 3px;
 `;
 
+const StyledHeader = styled.h1`
+	color: royalblue;
+	margin: 1em;
+	padding: 0.25em 1em;
+	text-align: center;
+`;
+
 export default function Home() {
 	const [film, setFilm] = useState([]);
 	const [filmData, setFilmData] = useState({});
@@ -37,19 +44,50 @@ export default function Home() {
 
 	const toggleModal = async (item) => {
 		await setFilmData(item);
-		console.log(item.title);
 		setModalShow(!modalShow);
 	};
 
+	const randomFilm = async () => {
+		const values = Object.values(film);
+		const prop = values[Math.floor(Math.random() * values.length)]
+		await setFilmData(prop);
+		setModalShow(!modalShow);
+	}
+
 	return (
-		<Wrapper className="jumbotron">
+		<Wrapper
+			className="jumbotron"
+			styles={{
+				display: "flex",
+				//flexDirection: "column"
+			}}
+		>
+			<StyledHeader>Studio Ghibli Movies</StyledHeader>
 			{showLoading && (
 				<Spinner animation="border" role="status">
 					<span className="sr-only">Loading...</span>
 				</Spinner>
 			)}
-			<Container>
-				<Row style={{ padding: "20px" }} className="g-4">
+			<Container
+				style={{
+					textAlign: "center",
+					justifyContent: "center",
+					alignItems: "center",
+					margin: "auto",
+				}}
+				fluid
+			>
+				<StyledButton
+					style={{
+						background: "transparent",
+					}}
+					onClick = {randomFilm}>
+					Click for Movie Recommendation
+				</StyledButton>
+				<Row
+					style={{ padding: "20px", margin: "20px" }}
+					className="g-4"
+				>
 					{film.map((item, id) => (
 						<>
 							<Card
